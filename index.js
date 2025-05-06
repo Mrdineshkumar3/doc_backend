@@ -10,15 +10,29 @@ require('dotenv').config();
 const PORT =process.env.PORT || 3001
 app.use(express.json())
 
-const corsCofig = {
-    origin:process.env.APPLICATION_URL,
-    credentials:true,
-    methods: ["GET","POST","PUT","DELETE"],
-}
+// const corsCofig = {
+//     origin:process.env.APPLICATION_URL,
+//     credentials:true,
+//     methods: ["GET","POST","PUT","DELETE"],
+// }
+const allowedOrigins = ['https://doc-frontend-gamma.vercel.app'];
 
+app.use(cors({
+  origin: function(origin, callback){
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 const { data } = require('react-router-dom')
 
-app.use(cors(corsCofig))
+// app.use(cors(corsCofig))
 mongoose.connect(process.env.MONGO_URI)
 
 
